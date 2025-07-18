@@ -1,5 +1,6 @@
 import json
 import math
+import os
 import re
 
 import discord
@@ -12,7 +13,7 @@ from classes import Character, Item
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
-
+TOKEN = os.getenv('DISCORD_TOKEN')
 
 @bot.event
 async def on_ready():
@@ -106,9 +107,9 @@ async def user(ctx, character_name):
     print(f"Character:{character.name} - {character.gs} GS")
     await ctx.send(embed=embed_message(character=character))
 
-def get_token():
-    with open('secrets.json') as f:
-        secrets = json.load(f)
-        return secrets["api_token"]
+# def get_token():
+#     with open('secrets.json') as f:
+#         secrets = json.load(f)
+#         return secrets["api_token"]
 
-bot.run(get_token())
+bot.run(TOKEN)
