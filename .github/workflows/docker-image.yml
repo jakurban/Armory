@@ -28,6 +28,6 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          IMAGE="gcr.io/armory-466310/armory:1.0:$(date +%s)"
+          IMAGE="gcr.io/armory-466310/armory:$(date +%s)"
           docker build -t $IMAGE .
           docker push $IMAGE
