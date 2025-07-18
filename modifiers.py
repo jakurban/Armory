@@ -12,7 +12,7 @@ SLOT_MODIFIERS = {
             "finger": 0.5625,
             "trinket": 0.5625,
             "mainhand": 1.0,
-            "offhand": 1.0,
+            "off-hand": 1.0,
             "one-hand": 1.0,
             "two-hand": 2.0,
             "ranged": 0.3164,

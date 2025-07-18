@@ -39,4 +39,6 @@ jobs:
             --image=gcr.io/armory-466310/armory:latest \
             --region=europe-west1 \
             --platform=managed \
+            --set-secrets DISCORD_TOKEN=DISCORD_TOKEN:latest \
+            --min-instances 1 \
             --quiet

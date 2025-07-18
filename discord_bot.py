@@ -1,5 +1,4 @@
 import math
-import os
 import re
 
 import discord
@@ -12,7 +11,6 @@ from classes import Character, Item
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
-
 
 
 @bot.event
@@ -49,6 +47,26 @@ def embed_message(character):
     return embed
 
 
+def fetch_item_data(item_href, item_quality):
+    headers = {"User-Agent": "Mozilla/5.0"}
+    item_url = item_href
+    response = requests.get(item_url, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+    text = soup.get_text()
+    match = re.search(r"Item Level\s*(\d+)", text)
+    for slot_name in [
+        "Head", "Neck", "Shoulder", "Back", "Chest", "Wrist", "Hands",
+        "Waist", "Legs", "Feet", "Finger", "Trinket", "Thrown",
+        "Main Hand", "Off-Hand", "One-hand", "Two-hand", "Ranged", "Shield", "Relic"
+    ]:
+        partial = text.strip().split("Item Level")[0].split("Binds when")
+        if len(partial) < 2: continue
+        if slot_name in partial[1]:
+            slot = slot_name.strip().lower().replace(" ", "")
+    if match:
+        return Item(ilvl=int(match.group(1)), rarity=int(item_quality), slot=slot, url=item_url)
+
+
 @bot.command()
 async def user(ctx, character_name):
     url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/summary"
@@ -72,23 +90,8 @@ async def user(ctx, character_name):
         item_href = [a.get("href") for a in html_snippet.find_all("a") if
                      "wotlk.cavernoftime.com/item=" in a.get("href")]
         for i in range(len(item_href)):
-            item_url = item_href[i]
-            response = requests.get(item_url, headers=headers)
-            soup = BeautifulSoup(response.text, "html.parser")
-            text = soup.get_text()
-            match = re.search(r"Item Level\s*(\d+)", text)
-            for slot_name in [
-                "Head", "Neck", "Shoulder", "Back", "Chest", "Wrist", "Hands",
-                "Waist", "Legs", "Feet", "Finger", "Trinket", "Thrown",
-                "Main Hand", "Off Hand", "One-hand", "Two-hand", "Ranged", "Shield", "Relic"
-            ]:
-                partial = text.strip().split("Item Level")[0].split("Binds when")
-                if len(partial) < 2: continue
-                if slot_name in partial[1]:
-                    slot = slot_name.strip().lower().replace(" ", "")
-            if match:
-                character.items.append(
-                    Item(ilvl=int(match.group(1)), rarity=int(item_quality[i]), slot=slot, url=item_url))
+            item = await bot.loop.run_in_executor(None, fetch_item_data, item_href[i], item_quality[i])
+            if item: character.items.append(item)
 
     if character.klass == "Warrior":
         titan_grip = [item for item in character.items if item.slot == "two-hand"]
