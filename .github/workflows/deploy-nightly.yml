@@ -1,0 +1,46 @@
+name: Redeploy bot nightly
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Every day at 2 AM UTC
+  workflow_dispatch:
+
+jobs:
+  deploy-task:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: '${{ secrets.GCP_PROJECT_ID }}'
+          skip_auth: true
+
+      - name: Redeploy any running execution
+        run: |
+          JOB_NAME="armory"
+          REGION="europe-west1"
+
+          echo "Checking for running executions of $JOB_NAME..."
+          EXECUTION_ID=$(gcloud run jobs executions list \
+            --job="$JOB_NAME" \
+            --region="$REGION" \
+            --format="value(name)")
+
+          if [[ -n "$EXECUTION_ID" ]]; then
+            echo "Found running execution: $EXECUTION_ID. Canceling..."
+            gcloud run jobs executions delete "$EXECUTION_ID" --region="$REGION" --quiet
+          else
+            echo "No running executions found."
+          fi
+          
+          echo "Starting new execution of $JOB_NAME..."
+          gcloud run jobs execute "$JOB_NAME" --region="$REGION" --wait
