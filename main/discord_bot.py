@@ -24,7 +24,7 @@ def embed_message(character):
         description=f"{character.klass}",
         color=discord.Color.yellow()
     )
-    # embed.set_thumbnail(url="https://example.com/image.png")  # Replace with actual thumbnail URL
+    embed.set_thumbnail(url=IMAGES[character.klass])  # Replace with actual thumbnail URL
 
     embed.add_field(name="GearScore", value=f"{character.gs}", inline=True)
 
@@ -49,8 +49,7 @@ def embed_message(character):
 
 def fetch_item_data(item_href, item_quality):
     headers = {"User-Agent": "Mozilla/5.0"}
-    item_url = item_href
-    response = requests.get(item_url, headers=headers)
+    response = requests.get(item_href, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     text = soup.get_text()
     match = re.search(r"Item Level\s*(\d+)", text)
@@ -64,7 +63,7 @@ def fetch_item_data(item_href, item_quality):
         if slot_name in partial[1]:
             slot = slot_name.strip().lower().replace(" ", "")
     if match:
-        return Item(ilvl=int(match.group(1)), rarity=int(item_quality), slot=slot, url=item_url)
+        return Item(ilvl=int(match.group(1)), rarity=int(item_quality), slot=slot, url=item_href)
 
 
 @bot.command()

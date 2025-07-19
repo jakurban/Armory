@@ -4,7 +4,7 @@ from modifiers import SLOT_MODIFIERS, QUALITY_MODIFIERS
 
 
 class Character:
-    def __init__(self, name, level=None, race=None, klass=None, items=None):
+    def __init__(self, name, level=None, race=None, klass=None, items=None, specs=None, achievement_points=0):
         if items is None:
             self.items = []
         self.name = name
@@ -12,6 +12,8 @@ class Character:
         self.race = race
         self.klass = klass
         self.gs = 0
+        self.specs = specs
+        self.achievement_points = achievement_points
 
 
 class Item:
