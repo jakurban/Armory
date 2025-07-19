@@ -31,7 +31,10 @@ class Scraper:
 
     @property
     def char_klass(self):
-        return self._char_info[-2].replace(",", "")
+        klass = self._char_info[-2].replace(",", "")
+        if klass == "Knight":
+            return "Death Knight"
+        return klass
 
     @property
     def ach_points(self):

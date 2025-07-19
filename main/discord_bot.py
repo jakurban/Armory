@@ -25,7 +25,8 @@ def embed_message(character):
         color=discord.Color.yellow()
     )
     embed.set_thumbnail(url=IMAGES[character.klass])  # Replace with actual thumbnail URL
-    embed.add_field(name="GearScore", value=f"{character.gs}", inline=True)
+    embed.add_field(name="Gear Score", value=f"{character.gs}", inline=True)
+    embed.add_field(name="Achievement Points", value=f"{character.ach_points}", inline=True)
 
     # embed.add_field(
     #     name="Icecrown Citadel",
