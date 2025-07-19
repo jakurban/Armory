@@ -22,7 +22,6 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: '${{ secrets.GCP_PROJECT_ID }}'
-          skip_auth: true
 
       - name: Redeploy any running execution
         run: |
@@ -43,4 +42,4 @@ jobs:
           fi
           
           echo "Starting new execution of $JOB_NAME..."
-          gcloud run jobs execute "$JOB_NAME" --region="$REGION" --wait
+          gcloud run jobs execute "$JOB_NAME" --region="$REGION"
