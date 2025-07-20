@@ -67,7 +67,6 @@ async def user(ctx, character_name):
     character = Character(name=character_name, level=scraper.char_level, race=scraper.char_race,
                           klass=scraper.char_klass, ach_points=scraper.ach_points, specs=scraper.specs,
                           earned_achs=scraper.achievements)
-    print(character.earned_achs)
     item_quality = scraper.item_quality()
     item_href = scraper.item_href()
 
