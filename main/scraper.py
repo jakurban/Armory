@@ -1,7 +1,9 @@
+import asyncio
 import logging
 import re
 from time import sleep
 
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
 from discord.utils import cached_property
@@ -22,6 +24,10 @@ class Scraper:
     )
 
     def __init__(self, character_name):
+        self.options = Options()
+        self.options.add_argument("--headless")
+        self.options.add_argument("--disable-gpu")
+        self.driver = webdriver.Chrome(options=self.options)
         self.url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/summary"
         self.ach_url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/achievements"
         self.statistics_url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/statistics"
@@ -30,10 +36,6 @@ class Scraper:
         self.logger.info(f"Getting data from {self.url}")
         self.response = requests.get(self.url, headers=self.headers)
         self.soup = BeautifulSoup(self.response.text, "html.parser")
-        self.options = Options()
-        self.options.add_argument("--headless")
-        self.options.add_argument("--disable-gpu")
-        self.driver = webdriver.Chrome(options=self.options)
         self.earned_achs = {
             "Fall of the Lich King 10": {"nm": 0, "hc": 0},
             "Fall of the Lich King 25": {"nm": 0, "hc": 0},
