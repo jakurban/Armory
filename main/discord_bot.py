@@ -1,7 +1,6 @@
 import math
 
 import discord
-import requests
 from discord.ext import commands
 
 from classes import Character
@@ -41,13 +40,13 @@ def embed_message(character):
 
     rs_string = "   "
     if character.earned_achs["Lich King 10-Player Raid"]["nm"] == 1:
-        rs_string+="✅ rs10 NM\n"
+        rs_string += "✅ rs10 NM\n"
     if character.earned_achs["Lich King 10-Player Raid"]["hc"] == 1:
-        rs_string+="✅ rs10 HC\n"
+        rs_string += "✅ rs10 HC\n"
     if character.earned_achs["Lich King 25-Player Raid"]["nm"] == 1:
-        rs_string+="✅ rs25 NM\n"
+        rs_string += "✅ rs25 NM\n"
     if character.earned_achs["Lich King 25-Player Raid"]["hc"] == 1:
-        rs_string+="✅ rs25 HC\n"
+        rs_string += "✅ rs25 HC\n"
 
     embed.add_field(
         name="Ruby Sanctum",
@@ -63,10 +62,10 @@ async def user(ctx, character_name):
     if "The character you are looking for does not exist or does not meet the minimum required level." in scraper.response.text:
         await ctx.send("**Error:** Unable to get the info you need.")
         return
-
+    earned_achs = scraper.achievements if int(scraper.char_level) == 80 else None
     character = Character(name=character_name, level=scraper.char_level, race=scraper.char_race,
                           klass=scraper.char_klass, ach_points=scraper.ach_points, specs=scraper.specs,
-                          earned_achs=scraper.achievements)
+                          earned_achs=earned_achs)
     item_quality = scraper.item_quality()
     item_href = scraper.item_href()
 
@@ -89,6 +88,4 @@ async def user(ctx, character_name):
 
     for item in character.items:
         character.gs += item.gs
-    #     print(item)
-    # print(f"Character:{character.name} - {character.gs} GS")
     await ctx.send(embed=embed_message(character=character))

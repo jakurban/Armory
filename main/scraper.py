@@ -1,3 +1,4 @@
+import logging
 import re
 from time import sleep
 
@@ -20,11 +21,18 @@ class Scraper:
         "Lich King 10-Player Raid": {"nm": 0, "hc": 0},
         "Lich King 25-Player Raid": {"nm": 0, "hc": 0},
     }
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+        handlers=[logging.StreamHandler()]
+    )
 
     def __init__(self, character_name):
         self.url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/summary"
         self.ach_url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/achievements"
         self.headers = {"User-Agent": "Mozilla/5.0"}
+        self.logger = logging.getLogger('discord_bot')
+        self.logger.info(f"Getting data from {self.url}")
         self.response = requests.get(self.url, headers=self.headers)
         self.soup = BeautifulSoup(self.response.text, "html.parser")
         self.options = Options()
@@ -62,10 +70,11 @@ class Scraper:
 
     @cached_property
     def specs(self):
+        self.logger.info(f"Getting specs")
         specs = self.soup.find("div", {"class": "specialization"})
         first = specs.contents[1].text.strip().split()[0]
-        second=""
-        if len(specs.contents)>3:
+        second = ""
+        if len(specs.contents) > 3:
             second = specs.contents[3].text.strip().split()[0]
         return f"{first}/{second}"
 
@@ -77,6 +86,7 @@ class Scraper:
         return [a.get("href") for a in self.items.find_all("a") if "wotlk.cavernoftime.com/item=" in a.get("href")]
 
     def fetch_item_data(self, item_href, item_quality):
+        self.logger.info(f"Getting item data from {item_href}")
         response = requests.get(item_href, headers=self.headers)
         soup = BeautifulSoup(response.text, "html.parser")
         text = soup.get_text()
@@ -97,13 +107,15 @@ class Scraper:
 
     @cached_property
     def achievements(self):
+        self.logger.info(f"Getting achievements data from {self.ach_url}")
         self.driver.get(self.ach_url)
         self.driver.find_element(By.LINK_TEXT, "Dungeons & Raids").click()
         for page in ACHIEVEMENTS.keys():
             self.driver.find_element(By.LINK_TEXT, page).click()
             sleep(1)
             for diff in ACHIEVEMENTS[page].keys():
+                self.logger.info(f"Checking achievements for {page} {diff}")
                 for ach, ach_value in ACHIEVEMENTS[page][diff].items():
-                    if "Earned" in self.driver.find_element(value=ach_value).text:
+                    if "locked" not in self.driver.find_element(value=ach_value).get_attribute("class"):
                         self.earned_achs[page][diff] = ach
         return self.earned_achs

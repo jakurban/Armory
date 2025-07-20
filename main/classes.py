@@ -14,6 +14,13 @@ class Character:
         self.gs = 0
         self.specs = specs
         self.ach_points = ach_points
+        if earned_achs is None:
+            earned_achs = {
+                "Fall of the Lich King 10": {"nm": 0, "hc": 0},
+                "Fall of the Lich King 25": {"nm": 0, "hc": 0},
+                "Lich King 10-Player Raid": {"nm": 0, "hc": 0},
+                "Lich King 25-Player Raid": {"nm": 0, "hc": 0},
+            }
         self.earned_achs = earned_achs
 
 
