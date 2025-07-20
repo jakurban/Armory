@@ -4,7 +4,7 @@ from modifiers import SLOT_MODIFIERS, QUALITY_MODIFIERS
 
 
 class Character:
-    def __init__(self, name, level=None, race=None, klass=None, items=None, specs=None, ach_points=0, earned_achs=None):
+    def __init__(self, name, level=None, race=None, klass=None, items=None, specs=None, ach_points=0, killed_bosses=None):
         if items is None:
             self.items = []
         self.name = name
@@ -14,14 +14,14 @@ class Character:
         self.gs = 0
         self.specs = specs
         self.ach_points = ach_points
-        if earned_achs is None:
-            earned_achs = {
+        if killed_bosses is None:
+            killed_bosses = {
                 "Fall of the Lich King 10": {"nm": 0, "hc": 0},
                 "Fall of the Lich King 25": {"nm": 0, "hc": 0},
                 "Lich King 10-Player Raid": {"nm": 0, "hc": 0},
                 "Lich King 25-Player Raid": {"nm": 0, "hc": 0},
             }
-        self.earned_achs = earned_achs
+        self.killed_bosses = killed_bosses
 
 
 class Item:
@@ -48,9 +48,6 @@ class Item:
         a = QUALITY_MODIFIERS[gs_formula_section][self.rarity]["A"]
         b = QUALITY_MODIFIERS[gs_formula_section][self.rarity]["B"]
         slot_mod = SLOT_MODIFIERS.get(self.slot)
-
         quality_scale = {0: 0.005, 1: 0.005, 5: 1.3}
-
         base_score = ((self.ilvl - a) / b) * slot_mod * 1.8618 * quality_scale.get(self.rarity, 1.0)
-
         return math.floor(base_score)

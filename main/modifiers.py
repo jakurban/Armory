@@ -50,37 +50,6 @@ IMAGES = {
 }
 
 ACHIEVEMENTS = {
-    "Fall of the Lich King 10": {
-        "nm": {
-            4: "ach4531",
-            7: "ach4528",
-            9: "ach4529",
-            11: "ach4527",
-            12: "ach4530"},
-        "hc": {
-            4: "ach4628",
-            7: "ach4629",
-            9: "ach4630",
-            11: "ach4631",
-            12: "ach4583", }
-
-    },
-    "Fall of the Lich King 25": {
-        "nm": {
-            4: "ach4604",
-            7: "ach4605",
-            9: "ach4606",
-            11: "ach4607",
-            12: "ach4597"
-        },
-        "hc": {
-            4: "ach4632",
-            7: "ach4633",
-            9: "ach4634",
-            11: "ach4635",
-            12: "ach4584",
-        }
-    },
     "Lich King 10-Player Raid": {
         "nm": {1: "ach4817"},
         "hc": {1: "ach4818"}
@@ -90,3 +59,54 @@ ACHIEVEMENTS = {
         "hc": {1: "ach4816"},
     }
 }
+
+# ICC = {
+#     "Blood Prince Council kills (Heroic Icecrown 10 player)": 0,
+#     "Blood Prince Council kills (Heroic Icecrown 25 player)": 0,
+#     "Blood Prince Council kills (Icecrown 10 player)": 0,
+#     "Blood Prince Council kills (Icecrown 25 player)": 0,
+#     "Blood Queen Lana'thel kills (Heroic Icecrown 10 player)": 0,
+#     "Blood Queen Lana'thel kills (Heroic Icecrown 25 player)": 0,
+#     "Blood Queen Lana'thel kills (Icecrown 10 player)": 0,
+#     "Blood Queen Lana'thel kills (Icecrown 25 player)": 0,
+#     "Deathbringer kills (Heroic Icecrown 10 player)": 0,
+#     "Deathbringer kills (Heroic Icecrown 25 player)": 0,
+#     "Deathbringer kills (Icecrown 10 player)": 0,
+#     "Deathbringer kills (Icecrown 25 player)": 0,
+#     "Festergut kills (Heroic Icecrown 10 player)": 0,
+#     "Festergut kills (Heroic Icecrown 25 player)": 0,
+#     "Festergut kills (Icecrown 10 player)": 0,
+#     "Festergut kills (Icecrown 25 player)": 0,
+#     "Gunship Battle victories (Heroic Icecrown 10 player)": 0,
+#     "Gunship Battle victories (Heroic Icecrown 25 player)": 0,
+#     "Gunship Battle victories (Icecrown 10 player)": 0,
+#     "Gunship Battle victories (Icecrown 25 player)": 0,
+#     "Lady Deathwhisper kills (Heroic Icecrown 10 player)": 0,
+#     "Lady Deathwhisper kills (Heroic Icecrown 25 player)": 0,
+#     "Lady Deathwhisper kills (Icecrown 10 player)": 0,
+#     "Lady Deathwhisper kills (Icecrown 25 player)": 0,
+#     "Lord Marrowgar kills (Heroic Icecrown 10 player)": 0,
+#     "Lord Marrowgar kills (Heroic Icecrown 25 player)": 0,
+#     "Lord Marrowgar kills (Icecrown 10 player)": 0,
+#     "Lord Marrowgar kills (Icecrown 25 player)": 0,
+#     "Professor Putricide kills (Heroic Icecrown 10 player)": 0,
+#     "Professor Putricide kills (Heroic Icecrown 25 player)": 0,
+#     "Professor Putricide kills (Icecrown 10 player)": 0,
+#     "Professor Putricide kills (Icecrown 25 player)": 0,
+#     "Rotface kills (Heroic Icecrown 10 player)": 0,
+#     "Rotface kills (Heroic Icecrown 25 player)": 0,
+#     "Rotface kills (Icecrown 10 player)": 0,
+#     "Rotface kills (Icecrown 25 player)": 0,
+#     "Sindragosa kills (Heroic Icecrown 10 player)": 0,
+#     "Sindragosa kills (Heroic Icecrown 25 player)": 0,
+#     "Sindragosa kills (Icecrown 10 player)": 0,
+#     "Sindragosa kills (Icecrown 25 player)": 0,
+#     "Valithria Dreamwalker rescues (Heroic Icecrown 10 player)": 0,
+#     "Valithria Dreamwalker rescues (Heroic Icecrown 25 player)": 0,
+#     "Valithria Dreamwalker rescues (Icecrown 10 player)": 0,
+#     "Valithria Dreamwalker rescues (Icecrown 25 player)": 0,
+#     "Victories over the Lich King (Heroic Icecrown 10 player)": 0,
+#     "Victories over the Lich King (Heroic Icecrown 25 player)": 0,
+#     "Victories over the Lich King (Icecrown 10 player)": 0,
+#     "Victories over the Lich King (Icecrown 25 player)": 0,
+# }

@@ -15,12 +15,6 @@ from modifiers import ACHIEVEMENTS
 
 class Scraper:
     headers = {"User-Agent": "Mozilla/5.0"}
-    earned_achs = {
-        "Fall of the Lich King 10": {"nm": 0, "hc": 0},
-        "Fall of the Lich King 25": {"nm": 0, "hc": 0},
-        "Lich King 10-Player Raid": {"nm": 0, "hc": 0},
-        "Lich King 25-Player Raid": {"nm": 0, "hc": 0},
-    }
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
@@ -30,8 +24,9 @@ class Scraper:
     def __init__(self, character_name):
         self.url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/summary"
         self.ach_url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/achievements"
+        self.statistics_url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/statistics"
         self.headers = {"User-Agent": "Mozilla/5.0"}
-        self.logger = logging.getLogger('discord_bot')
+        self.logger = logging.getLogger('Armory')
         self.logger.info(f"Getting data from {self.url}")
         self.response = requests.get(self.url, headers=self.headers)
         self.soup = BeautifulSoup(self.response.text, "html.parser")
@@ -39,6 +34,12 @@ class Scraper:
         self.options.add_argument("--headless")
         self.options.add_argument("--disable-gpu")
         self.driver = webdriver.Chrome(options=self.options)
+        self.earned_achs = {
+            "Fall of the Lich King 10": {"nm": 0, "hc": 0},
+            "Fall of the Lich King 25": {"nm": 0, "hc": 0},
+            "Lich King 10-Player Raid": {"nm": 0, "hc": 0},
+            "Lich King 25-Player Raid": {"nm": 0, "hc": 0},
+        }
 
     @cached_property
     def _char_info(self):
@@ -105,11 +106,12 @@ class Scraper:
         if match:
             return Item(ilvl=int(match.group(1)), rarity=int(item_quality), slot=slot, url=item_href)
 
-    @cached_property
     def achievements(self):
         self.logger.info(f"Getting achievements data from {self.ach_url}")
         self.driver.get(self.ach_url)
+        sleep(1)
         self.driver.find_element(By.LINK_TEXT, "Dungeons & Raids").click()
+        sleep(1)
         for page in ACHIEVEMENTS.keys():
             self.driver.find_element(By.LINK_TEXT, page).click()
             sleep(1)
@@ -118,4 +120,38 @@ class Scraper:
                 for ach, ach_value in ACHIEVEMENTS[page][diff].items():
                     if "locked" not in self.driver.find_element(value=ach_value).get_attribute("class"):
                         self.earned_achs[page][diff] = ach
+
+    def statistics(self):
+        self.logger.info(f"Getting statistics data from {self.statistics_url}")
+        self.driver.get(self.statistics_url)
+        sleep(1)
+        self.driver.find_element(By.LINK_TEXT, "Dungeons & Raids").click()
+        sleep(1)
+        self.driver.find_element(By.LINK_TEXT, "Fall of the Lich King").click()
+        sleep(1)
+        soup = BeautifulSoup(self.driver.page_source, "html.parser")
+        for boss in soup.find("tbody", {"id": "data-table-list"}).contents:
+            kills = boss.text.strip().split("\n")
+            if len(kills) == 2:
+                if kills[1] != "- -":
+                    if int(kills[1]) > 0 and "Icecrown" in kills[0]:
+                        if "Heroic" in kills[0]:
+                            if "10 player" in kills[0]:
+                                self.logger.info(f"Adding +1 to 10 man hc: {kills[0]}")
+                                self.earned_achs["Fall of the Lich King 10"]["hc"] += 1
+                            else:
+                                self.logger.info(f"Adding +1 to 25 man hc: {kills[0]}")
+                                self.earned_achs["Fall of the Lich King 25"]["hc"] += 1
+                        else:
+                            if "10 player" in kills[0]:
+                                self.logger.info(f"Adding +1 to 10 man nm: {kills[0]}")
+                                self.earned_achs["Fall of the Lich King 10"]["nm"] += 1
+                            else:
+                                self.logger.info(f"Adding +1 to 25 man nm: {kills[0]}")
+                                self.earned_achs["Fall of the Lich King 25"]["nm"] += 1
+
+    @cached_property
+    def killed_bosses(self):
+        self.achievements()
+        self.statistics()
         return self.earned_achs
