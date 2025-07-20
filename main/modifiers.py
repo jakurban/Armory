@@ -48,3 +48,45 @@ IMAGES = {
     "Warlock": "http://i.imgur.com/V4KShdi.png",
     "Warrior": "https://i.imgur.com/3aSHHRO.png"
 }
+
+ACHIEVEMENTS = {
+    "Fall of the Lich King 10": {
+        "nm": {
+            4: "ach4531",
+            7: "ach4528",
+            9: "ach4529",
+            11: "ach4527",
+            12: "ach4530"},
+        "hc": {
+            4: "ach4628",
+            7: "ach4629",
+            9: "ach4630",
+            11: "ach4631",
+            12: "ach4583", }
+
+    },
+    "Fall of the Lich King 25": {
+        "nm": {
+            4: "ach4604",
+            7: "ach4605",
+            9: "ach4606",
+            11: "ach4607",
+            12: "ach4597"
+        },
+        "hc": {
+            4: "ach4632",
+            7: "ach4633",
+            9: "ach4634",
+            11: "ach4635",
+            12: "ach4584",
+        }
+    },
+    "Lich King 10-Player Raid": {
+        "nm": {1: "ach4817"},
+        "hc": {1: "ach4818"}
+    },
+    "Lich King 25-Player Raid": {
+        "nm": {1: "ach4815"},
+        "hc": {1: "ach4816"},
+    }
+}

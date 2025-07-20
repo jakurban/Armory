@@ -1,20 +1,36 @@
 import re
+from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
 from discord.utils import cached_property
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
 from classes import Item
+from modifiers import ACHIEVEMENTS
 
 
 class Scraper:
     headers = {"User-Agent": "Mozilla/5.0"}
+    earned_achs = {
+        "Fall of the Lich King 10": {"nm": 0, "hc": 0},
+        "Fall of the Lich King 25": {"nm": 0, "hc": 0},
+        "Lich King 10-Player Raid": {"nm": 0, "hc": 0},
+        "Lich King 25-Player Raid": {"nm": 0, "hc": 0},
+    }
 
     def __init__(self, character_name):
         self.url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/summary"
+        self.ach_url = f"https://armory.warmane.com/character/{character_name}/Lordaeron/achievements"
         self.headers = {"User-Agent": "Mozilla/5.0"}
         self.response = requests.get(self.url, headers=self.headers)
         self.soup = BeautifulSoup(self.response.text, "html.parser")
+        self.options = Options()
+        self.options.add_argument("--headless")
+        self.options.add_argument("--disable-gpu")
+        self.driver = webdriver.Chrome(options=self.options)
 
     @cached_property
     def _char_info(self):
@@ -36,7 +52,7 @@ class Scraper:
             return "Death Knight"
         return klass
 
-    @property
+    @cached_property
     def ach_points(self):
         return int(self.soup.find("div", {"class": "achievement-points"}).text)
 
@@ -44,11 +60,13 @@ class Scraper:
     def items(self):
         return self.soup.find("div", {"class": "item-model"})
 
-    @property
+    @cached_property
     def specs(self):
         specs = self.soup.find("div", {"class": "specialization"})
         first = specs.contents[1].text.strip().split()[0]
-        second = specs.contents[3].text.strip().split()[0]
+        second=""
+        if len(specs.contents)>3:
+            second = specs.contents[3].text.strip().split()[0]
         return f"{first}/{second}"
 
     def item_quality(self):
@@ -76,3 +94,16 @@ class Scraper:
         if slot is None: return None
         if match:
             return Item(ilvl=int(match.group(1)), rarity=int(item_quality), slot=slot, url=item_href)
+
+    @cached_property
+    def achievements(self):
+        self.driver.get(self.ach_url)
+        self.driver.find_element(By.LINK_TEXT, "Dungeons & Raids").click()
+        for page in ACHIEVEMENTS.keys():
+            self.driver.find_element(By.LINK_TEXT, page).click()
+            sleep(1)
+            for diff in ACHIEVEMENTS[page].keys():
+                for ach, ach_value in ACHIEVEMENTS[page][diff].items():
+                    if "Earned" in self.driver.find_element(value=ach_value).text:
+                        self.earned_achs[page][diff] = ach
+        return self.earned_achs

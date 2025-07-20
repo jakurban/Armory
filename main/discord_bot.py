@@ -28,22 +28,32 @@ def embed_message(character):
     embed.add_field(name="Gear Score", value=f"{character.gs}", inline=True)
     embed.add_field(name="Achievement Points", value=f"{character.ach_points}", inline=True)
 
-    # embed.add_field(
-    #     name="Icecrown Citadel",
-    #     value=(
-    #         "`9/12` 10-man NM\n"
-    #         "`7/12` 10-man HC\n"
-    #         "`12/12` 25-man NM\n"
-    #         "`12/12` 25-man HC"
-    #     ),
-    #     inline=False
-    # )
+    embed.add_field(
+        name="Icecrown Citadel",
+        value=(
+            f"`{character.earned_achs["Fall of the Lich King 10"]["nm"]}/12` icc10 NM\n"
+            f"`{character.earned_achs["Fall of the Lich King 10"]["hc"]}/12` icc10 HC\n"
+            f"`{character.earned_achs["Fall of the Lich King 25"]["nm"]}/12` icc25 NM\n"
+            f"`{character.earned_achs["Fall of the Lich King 25"]["hc"]}/12` icc25 HC"
+        ),
+        inline=False
+    )
 
-    # embed.add_field(
-    #     name="Ruby Sanctum",
-    #     value="✅ 25-man NM\n✅ 25-man HC",
-    #     inline=False
-    # )
+    rs_string = "   "
+    if character.earned_achs["Lich King 10-Player Raid"]["nm"] == 1:
+        rs_string+="✅ rs10 NM\n"
+    if character.earned_achs["Lich King 10-Player Raid"]["hc"] == 1:
+        rs_string+="✅ rs10 HC\n"
+    if character.earned_achs["Lich King 25-Player Raid"]["nm"] == 1:
+        rs_string+="✅ rs25 NM\n"
+    if character.earned_achs["Lich King 25-Player Raid"]["hc"] == 1:
+        rs_string+="✅ rs25 HC\n"
+
+    embed.add_field(
+        name="Ruby Sanctum",
+        value=rs_string,
+        inline=False
+    )
     return embed
 
 
@@ -55,8 +65,9 @@ async def user(ctx, character_name):
         return
 
     character = Character(name=character_name, level=scraper.char_level, race=scraper.char_race,
-                          klass=scraper.char_klass, ach_points=scraper.ach_points, specs=scraper.specs)
-
+                          klass=scraper.char_klass, ach_points=scraper.ach_points, specs=scraper.specs,
+                          earned_achs=scraper.achievements)
+    print(character.earned_achs)
     item_quality = scraper.item_quality()
     item_href = scraper.item_href()
 
